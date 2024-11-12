@@ -10,4 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SparkMetricsVO {
+
+    private Integer jobId;
 }
