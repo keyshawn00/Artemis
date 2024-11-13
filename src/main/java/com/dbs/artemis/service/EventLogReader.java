@@ -1,7 +1,8 @@
 package com.dbs.artemis.service;
 
 import com.dbs.artemis.listener.EventLogReplayListener;
-import com.dbs.artemis.model.SparkMetricsVO;
+import com.dbs.artemis.model.SparkEventLog;
+import com.dbs.artemis.model.SparkMetrics;
 import com.dbs.artemis.util.ResourceUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.spark.scheduler.ReplayListenerBus;
@@ -14,12 +15,18 @@ import java.io.InputStream;
 public class EventLogReader {
 
     public void read() {
-        EventLogReplayListener listener = new EventLogReplayListener(SparkMetricsVO.builder().build());
+        EventLogReplayListener listener = new EventLogReplayListener(SparkEventLog.builder().build());
         ReplayListenerBus bus = new ReplayListenerBus();
         bus.addListener(listener);
-        String path = "";
+        String path = "even-logs/application_1731405959099_0007";
         InputStream inputStream = ResourceUtil.getResource(path);
         bus.replay(inputStream, "", false, ReplayListenerBus.SELECT_ALL_FILTER());
-        log.info("metrics: {}", listener.getMetrics());
+
+        SparkMetrics metrics = buildMetrics(listener.getEventLog());
+        log.info("metrics: {}", metrics);
+    }
+
+    private SparkMetrics buildMetrics(SparkEventLog eventLog) {
+        return SparkMetrics.builder().build();
     }
 }

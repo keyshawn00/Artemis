@@ -9,7 +9,15 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SparkMetricsVO {
+public class SparkExecutor {
 
-    private Integer jobId;
+    private String id;
+
+    private Long startTime;
+
+    private Long endTime;
+
+    private Long duration;
+
+    private Integer cores;
 }
