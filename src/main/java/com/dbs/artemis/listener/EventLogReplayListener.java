@@ -109,11 +109,6 @@ public class EventLogReplayListener extends SparkListener {
     }
 
     @Override
-    public void onTaskStart(SparkListenerTaskStart taskStart) {
-        log.info("onTaskStart");
-    }
-
-    @Override
     public void onTaskEnd(SparkListenerTaskEnd taskEnd) {
         TaskInfo taskInfo = taskEnd.taskInfo();
         if (taskInfo == null) {
