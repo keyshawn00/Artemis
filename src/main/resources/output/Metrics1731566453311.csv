@@ -1,0 +1,5 @@
+﻿applicationId,stageCount,taskCount,jobCount,duration,vCore,memory,totalShuffleReadBytes,totalShuffleByteWritten,executorDeserializeTime,executorDeserializeCpuTime,resultSerializeTime,memoryBytesSpill,diskBytesSpill,inputBytesRead,outputBytesWritten,jvmGcTime,peakExecutionMemory
+application_1731405959099_0007,1,10,1,11780,,4g,0,0,4439,1527187669,23,0,0,0,0,94,0
+application_1731405959099_0049,3,5,3,33635,,4G,46195165,92714011,1146,967427212,4,0,0,0,0,509,272629760
+application_1731405959099_0050,3,9,3,32675,,6G,23056550,92852135,2851,1230874592,5,0,0,0,0,1281,135790592
+application_1731405959099_0051,3,13,3,32411,,8G,15434288,93044561,3910,1358735347,18,0,0,0,0,1802,135528448

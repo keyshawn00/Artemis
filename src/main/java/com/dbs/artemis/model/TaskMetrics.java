@@ -24,13 +24,13 @@ public class TaskMetrics {
 
     private Long diskBytesSpill;
 
-    private Long peakJvmMemory;
-
     private Long peakExecutionMemory;
-
-    private Long peakStorageMemory;
 
     private Long shuffleReadBytes;
 
     private Long shuffleByteWritten;
+
+    private Long inputBytesRead;
+
+    private Long outputBytesWritten;
 }

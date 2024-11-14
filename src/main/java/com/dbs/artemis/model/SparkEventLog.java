@@ -24,5 +24,5 @@ public class SparkEventLog {
 
     private List<SparkExecutor> executors;
 
-    private List<SparkJobVO> jobs;
+    private List<SparkJob> jobs;
 }

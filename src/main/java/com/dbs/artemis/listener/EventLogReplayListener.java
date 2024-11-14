@@ -45,7 +45,6 @@ public class EventLogReplayListener extends SparkListener {
 
     @Override
     public void onEnvironmentUpdate(SparkListenerEnvironmentUpdate environmentUpdate) {
-        log.info("onEnvironmentUpdate");
         Map<String, String> configMap = MapUtil.newHashMap();
         environmentUpdate.environmentDetails().get("Spark Properties")
                 .get().foreach(entry -> configMap.put(entry._1(), entry._2()));
@@ -54,45 +53,40 @@ public class EventLogReplayListener extends SparkListener {
 
     @Override
     public void onApplicationStart(SparkListenerApplicationStart applicationStart) {
-        log.info("onApplicationStart");
         eventLog.setApplicationId(applicationStart.appId().get());
         eventLog.setStartTime(applicationStart.time());
     }
 
     @Override
     public void onApplicationEnd(SparkListenerApplicationEnd applicationEnd) {
-        log.info("onApplicationEnd");
         eventLog.setEndTime(applicationEnd.time());
     }
 
     @Override
     public void onJobStart(SparkListenerJobStart jobStart) {
-        log.info("onJobStart");
         List<Integer> stageIds = new ArrayList<>();
         jobStart.stageInfos().foreach(stage -> stageIds.add(stage.stageId()));
-        SparkJobVO job = SparkJobVO.builder()
+        SparkJob job = SparkJob.builder()
                 .id(jobStart.jobId())
                 .startTime(jobStart.time())
                 .stageIds(stageIds)
                 .build();
-        List<SparkJobVO> jobs = Optional.ofNullable(eventLog.getJobs()).orElse(new ArrayList<>());
+        List<SparkJob> jobs = Optional.ofNullable(eventLog.getJobs()).orElse(new ArrayList<>());
         jobs.add(job);
         eventLog.setJobs(jobs);
     }
 
     @Override
     public void onJobEnd(SparkListenerJobEnd jobEnd) {
-        log.info("onJobEnd");
-        Map<Integer, SparkJobVO> jobMap =
-                StreamUtil.toMap(eventLog.getJobs(), SparkJobVO::getId, Function.identity());
-        SparkJobVO sparkJob = jobMap.get(jobEnd.jobId());
+        Map<Integer, SparkJob> jobMap =
+                StreamUtil.toMap(eventLog.getJobs(), SparkJob::getId, Function.identity());
+        SparkJob sparkJob = jobMap.get(jobEnd.jobId());
         Optional.ofNullable(sparkJob).ifPresent(job -> job.setEnTime(jobEnd.time()));
     }
 
     @Override
     public void onStageSubmitted(SparkListenerStageSubmitted stageSubmitted) {
-        log.info("onStageSubmitted");
-        SparkJobVO sparkJob = findSparkJob(stageSubmitted.stageInfo().stageId());
+        SparkJob sparkJob = findSparkJob(stageSubmitted.stageInfo().stageId());
         SparkStage stage = SparkStage.builder()
                 .id(stageSubmitted.stageInfo().stageId())
                 .startTime((Long) stageSubmitted.stageInfo().submissionTime().get())
@@ -107,7 +101,6 @@ public class EventLogReplayListener extends SparkListener {
 
     @Override
     public void onStageCompleted(SparkListenerStageCompleted stageCompleted) {
-        log.info("onStageCompleted");
         Integer stageId = stageCompleted.stageInfo().stageId();
         Map<Integer, SparkStage> stageMap = getStageMap();
         SparkStage sparkStage = stageMap.get(stageId);
@@ -122,7 +115,6 @@ public class EventLogReplayListener extends SparkListener {
 
     @Override
     public void onTaskEnd(SparkListenerTaskEnd taskEnd) {
-        log.info("onTaskEnd");
         TaskInfo taskInfo = taskEnd.taskInfo();
         if (taskInfo == null) {
             return;
@@ -138,7 +130,6 @@ public class EventLogReplayListener extends SparkListener {
 
     @Override
     public void onExecutorAdded(SparkListenerExecutorAdded executorAdded) {
-        log.info("onExecutorAdded");
         ExecutorInfo executorInfo = executorAdded.executorInfo();
         SparkExecutor executor = SparkExecutor.builder()
                 .id(executorAdded.executorId())
@@ -153,7 +144,6 @@ public class EventLogReplayListener extends SparkListener {
 
     @Override
     public void onExecutorRemoved(SparkListenerExecutorRemoved executorRemoved) {
-        log.info("onExecutorRemoved");
         SparkExecutor executor = StreamUtil.findFirst(eventLog.getExecutors(), e ->
                 Objects.equals(e.getId(), executorRemoved.executorId()), null);
         Optional.ofNullable(executor).ifPresent(e -> {
@@ -163,12 +153,12 @@ public class EventLogReplayListener extends SparkListener {
     }
 
     private Map<Integer, SparkStage> getStageMap() {
-        return StreamUtil.of(eventLog.getJobs()).map(SparkJobVO::getStages)
+        return StreamUtil.of(eventLog.getJobs()).map(SparkJob::getStages)
                 .flatMap(Collection::stream)
                 .collect(Collectors.toMap(SparkStage::getId, Function.identity()));
     }
 
-    private SparkJobVO findSparkJob(Integer stageId) {
+    private SparkJob findSparkJob(Integer stageId) {
         return StreamUtil.findFirst(eventLog.getJobs(),
                 job -> {
                     if (CollUtil.isEmpty(job.getStageIds())) {
@@ -203,12 +193,26 @@ public class EventLogReplayListener extends SparkListener {
         metrics.setResultSerializeTime(taskMetrics.resultSerializationTime());
         metrics.setMemoryBytesSpill(taskMetrics.memoryBytesSpilled());
         metrics.setDiskBytesSpill(taskMetrics.diskBytesSpilled());
-        metrics.setPeakJvmMemory(0L);
         metrics.setPeakExecutionMemory(taskMetrics.peakExecutionMemory());
-        metrics.setPeakStorageMemory(0L);
         metrics.setShuffleReadBytes(getShuffleReadBytes(taskMetrics));
         metrics.setShuffleByteWritten(getShuffleByteWritten(taskMetrics));
+        metrics.setInputBytesRead(getInputBytesRead(taskMetrics));
+        metrics.setOutputBytesWritten(getOutputBytesWritten(taskMetrics));
         task.setMetrics(metrics);
+    }
+
+    private Long getOutputBytesWritten(TaskMetrics taskMetrics) {
+        if (taskMetrics.outputMetrics() == null) {
+            return 0L;
+        }
+        return taskMetrics.outputMetrics().bytesWritten();
+    }
+
+    private Long getInputBytesRead(TaskMetrics taskMetrics) {
+        if (taskMetrics.inputMetrics() == null) {
+            return 0L;
+        }
+        return taskMetrics.inputMetrics().bytesRead();
     }
 
     private Long getShuffleReadBytes(TaskMetrics taskMetrics) {

@@ -1,5 +1,6 @@
 package com.dbs.artemis.model;
 
+import com.alibaba.excel.annotation.ExcelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,47 +12,58 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class SparkMetrics {
 
+    @ExcelProperty("applicationId")
     private String applicationId;
 
-    private String status;
-
+    @ExcelProperty("stageCount")
     private Integer stageCount;
 
-    private Integer failedStageCount;
-
+    @ExcelProperty("taskCount")
     private Integer taskCount;
 
+    @ExcelProperty("jobCount")
     private Integer jobCount;
 
+    @ExcelProperty("duration")
     private Long duration;
 
+    @ExcelProperty("vCore")
     private String vCore;
 
+    @ExcelProperty("memory")
     private String memory;
 
+    @ExcelProperty("totalShuffleReadBytes")
     private Long totalShuffleReadBytes;
 
+    @ExcelProperty("totalShuffleByteWritten")
     private Long totalShuffleByteWritten;
 
+    @ExcelProperty("executorDeserializeTime")
     private Long executorDeserializeTime;
 
+    @ExcelProperty("executorDeserializeCpuTime")
     private Long executorDeserializeCpuTime;
 
+    @ExcelProperty("resultSerializeTime")
     private Long resultSerializeTime;
 
+    @ExcelProperty("memoryBytesSpill")
     private Long memoryBytesSpill;
 
+    @ExcelProperty("diskBytesSpill")
     private Long diskBytesSpill;
 
-    private Long inputBytesSpill;
+    @ExcelProperty("inputBytesRead")
+    private Long inputBytesRead;
 
+    @ExcelProperty("outputBytesWritten")
     private Long outputBytesWritten;
 
+    @ExcelProperty("jvmGcTime")
     private Long jvmGcTime;
 
-    private Long peakJvmMemory;
-
+    @ExcelProperty("peakExecutionMemory")
     private Long peakExecutionMemory;
 
-    private Long peakStorageMemory;
 }

@@ -33,6 +33,7 @@
 		<scala.binary.version>2.13</scala.binary.version>
 		<spark.version>3.5.3</spark.version>
 		<mapstruct.version>1.5.5.Final</mapstruct.version>
+		<easyexcel.version>3.3.4</easyexcel.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -74,6 +75,11 @@
 			<groupId>org.apache.spark</groupId>
 			<artifactId>spark-core_2.13</artifactId>
 			<version>${spark.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.alibaba</groupId>
+			<artifactId>easyexcel</artifactId>
+			<version>${easyexcel.version}</version>
 		</dependency>
 	</dependencies>
 

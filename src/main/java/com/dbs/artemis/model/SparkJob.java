@@ -11,7 +11,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SparkJobVO {
+public class SparkJob {
 
     private Integer id;
 
