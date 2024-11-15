@@ -3,7 +3,6 @@
 https://github.com/keyshawn00/Artemis
 ## File structure:
 ```nashorn js
-.
 ├── ETL
 ├── README.md
 ├── dataset
@@ -11,7 +10,21 @@ https://github.com/keyshawn00/Artemis
 ├── gbm.py
 ├── img.png
 ├── labeling
-├── list.txt
-└── requirements.txt
+├── model.output
+└── src
+    └── main
+        ├── java
+        └── resources
+            ├── application.properties
+            ├── even-logs
+            │   ├── application_1731405959099_0007
+            │   ├── application_1731405959099_0049_1
+            │   ├── application_1731405959099_0050_1
+            │   └── application_1731405959099_0051_1
+            └── output
+                ├── Metrics1731565711332.csv
+                └── Metrics1731566453311.csv
+
+
 
 ```
